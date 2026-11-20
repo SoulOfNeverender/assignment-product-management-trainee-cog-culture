@@ -34,16 +34,23 @@ def current_model_name() -> str:
 
 with st.sidebar:
     st.header("API setup")
-    gemini_key = st.text_input(
-        "Gemini API key",
-        value=secret("GEMINI_API_KEY"),
-        type="password",
-    )
-    tavily_key = st.text_input(
-        "Tavily API key",
-        value=secret("TAVILY_API_KEY"),
-        type="password",
-    )
+    configured_gemini_key = secret("GEMINI_API_KEY")
+    configured_tavily_key = secret("TAVILY_API_KEY")
+    if configured_gemini_key and configured_tavily_key:
+        gemini_key = configured_gemini_key
+        tavily_key = configured_tavily_key
+        st.success("API keys loaded securely")
+    else:
+        gemini_key = st.text_input(
+            "Gemini API key",
+            value="",
+            type="password",
+        )
+        tavily_key = st.text_input(
+            "Tavily API key",
+            value="",
+            type="password",
+        )
     model = st.text_input("Model", value=current_model_name())
     max_claims = st.slider("Maximum claims", 5, 25, 5)
 
