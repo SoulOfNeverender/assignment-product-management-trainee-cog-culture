@@ -1,0 +1,22 @@
+Subject: Product Management Trainee Assessment Submission - [YOUR NAME]
+
+Dear Cog Culture Hiring Team,
+
+Please find my submission for the Product Management Trainee assessment below:
+
+- Deployed fact-checking app: https://assignment-appuct-management-trainee-cog-culture-gn8eydrjzx5hv.streamlit.app/
+- GitHub repository: https://github.com/SoulOfNeverender/assignment-product-management-trainee-cog-culture
+- Product strategy presentation: [Attach GEO_Product_Strategy.pptx or share the PDF/PPTX link]
+- 30-second demo video: [Attach submission.mp4 or share the uploaded video link]
+
+The Truth Layer app lets users upload PDFs, extract checkable claims, search live web evidence,
+and classify claims as Verified, Inaccurate, or False with confidence scores and source links.
+It also supports verdict filtering and JSON/CSV report downloads.
+
+Thank you for considering my application.
+
+Kind regards,
+[YOUR FULL NAME]
+[PHONE NUMBER]
+[EMAIL ADDRESS]
+[LINKEDIN PROFILE, OPTIONAL]
