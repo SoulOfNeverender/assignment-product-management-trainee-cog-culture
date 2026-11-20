@@ -66,7 +66,11 @@ def cached_extract(pdf_bytes: bytes, key: str, model_name: str, limit: int):
     return extract_claims(pages, key, model_name, limit).model_dump()
 
 
-@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=1, max=8))
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=1, max=8),
+    reraise=True,
+)
 def verify_one(claim, gemini_key, tavily_key, model_name):
     results = []
     for query in generate_queries(claim)[:2]:
@@ -119,7 +123,7 @@ def run_analysis(pdf_bytes: bytes):
                         what_the_evidence_says="Verification request failed.",
                         corrected_fact=None,
                         source_urls=[],
-                        reasoning=f"Error - retry: {type(exc).__name__}",
+                        reasoning=f"Error - retry: {type(exc).__name__}: {exc}",
                     ),
                 }
             rows.append(row)
