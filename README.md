@@ -49,7 +49,9 @@ Copy `.env.example` to `.env` locally. Streamlit supports these values in `st.se
 1. Push the repository to GitHub.
 2. Open [share.streamlit.io](https://share.streamlit.io), choose **New app**, select the repository,
    branch, and set **Main file path** to `app.py`.
-3. Open **Advanced settings → Secrets** and paste:
+3. In **Advanced settings**, choose **Python 3.12**. This must be selected when creating the
+   app; Streamlit does not change the interpreter for an existing app after deployment.
+4. Open **Advanced settings → Secrets** and paste:
 
 ```toml
 GEMINI_API_KEY = "..."
@@ -57,7 +59,11 @@ TAVILY_API_KEY = "..."
 GEMINI_MODEL = "gemini-2.5-flash"
 ```
 
-4. Deploy. The app also has a bring-your-own-key sidebar fallback.
+5. Deploy. The app also has a bring-your-own-key sidebar fallback.
+
+If the app was already created with Python 3.14 and dependency installation fails, delete that
+Streamlit app and create it again with Python 3.12 selected in Advanced settings. A reboot alone
+does not change the Python version.
 
 ## Tests and sample
 
