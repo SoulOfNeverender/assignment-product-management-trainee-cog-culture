@@ -26,9 +26,9 @@ def secret(name: str, fallback: str = "") -> str:
 
 
 def current_model_name() -> str:
-    configured = secret("GEMINI_MODEL", "gemini-2.5-flash-lite")
-    if configured in ("gemini-3.8-flash", "gemini-2.5-flash"):
-        return "gemini-2.5-flash-lite"
+    configured = secret("GEMINI_MODEL", "gemini-3.5-flash-lite")
+    if configured in ("gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"):
+        return "gemini-3.5-flash-lite"
     return configured
 
 
