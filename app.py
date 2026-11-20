@@ -37,7 +37,7 @@ with st.sidebar:
         value=secret("TAVILY_API_KEY"),
         type="password",
     )
-    model = st.text_input("Model", value=secret("GEMINI_MODEL", "gemini-2.5-flash"))
+    model = st.text_input("Model", value=secret("GEMINI_MODEL", "gemini-3.8-flash"))
     max_claims = st.slider("Maximum claims", 5, 25, 20)
 
 st.title("Truth Layer")
