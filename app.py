@@ -25,6 +25,13 @@ def secret(name: str, fallback: str = "") -> str:
     return os.getenv(name, fallback)
 
 
+def current_model_name() -> str:
+    configured = secret("GEMINI_MODEL", "gemini-3.8-flash")
+    if configured == "gemini-2.5-flash":
+        return "gemini-3.8-flash"
+    return configured
+
+
 with st.sidebar:
     st.header("API setup")
     gemini_key = st.text_input(
@@ -37,7 +44,7 @@ with st.sidebar:
         value=secret("TAVILY_API_KEY"),
         type="password",
     )
-    model = st.text_input("Model", value=secret("GEMINI_MODEL", "gemini-3.8-flash"))
+    model = st.text_input("Model", value=current_model_name())
     max_claims = st.slider("Maximum claims", 5, 25, 20)
 
 st.title("Truth Layer")
