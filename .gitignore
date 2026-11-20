@@ -1,0 +1,10 @@
+.env
+.streamlit/secrets.toml
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.log
+.DS_Store
+Assessment_Product Management Trainee.pdf
+
