@@ -26,9 +26,9 @@ def secret(name: str, fallback: str = "") -> str:
 
 
 def current_model_name() -> str:
-    configured = secret("GEMINI_MODEL", "gemini-3.8-flash")
-    if configured == "gemini-2.5-flash":
-        return "gemini-3.8-flash"
+    configured = secret("GEMINI_MODEL", "gemini-2.5-flash-lite")
+    if configured in ("gemini-3.8-flash", "gemini-2.5-flash"):
+        return "gemini-2.5-flash-lite"
     return configured
 
 
@@ -45,7 +45,7 @@ with st.sidebar:
         type="password",
     )
     model = st.text_input("Model", value=current_model_name())
-    max_claims = st.slider("Maximum claims", 5, 25, 10)
+    max_claims = st.slider("Maximum claims", 5, 25, 5)
 
 st.title("Truth Layer")
 st.caption("Upload a PDF. We extract checkable claims and compare them with live web evidence.")
@@ -114,7 +114,7 @@ def run_analysis(pdf_bytes: bytes):
     progress = st.progress(0)
     status = st.empty()
     rows = []
-    with ThreadPoolExecutor(max_workers=2) as pool:
+    with ThreadPoolExecutor(max_workers=1) as pool:
         futures = {
             pool.submit(verify_one, claim, gemini_key, tavily_key, model): claim
             for claim in claims

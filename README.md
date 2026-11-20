@@ -39,7 +39,7 @@ Create a Gemini API key and Tavily API key. You can enter them in the sidebar, o
 ```text
 GEMINI_API_KEY=...
 TAVILY_API_KEY=...
-GEMINI_MODEL=gemini-3.8-flash
+GEMINI_MODEL=gemini-2.5-flash-lite
 ```
 
 Copy `.env.example` to `.env` locally. Streamlit supports these values in `st.secrets`.
@@ -56,7 +56,7 @@ Copy `.env.example` to `.env` locally. Streamlit supports these values in `st.se
 ```toml
 GEMINI_API_KEY = "..."
 TAVILY_API_KEY = "..."
-GEMINI_MODEL = "gemini-3.8-flash"
+GEMINI_MODEL = "gemini-2.5-flash-lite"
 ```
 
 5. Deploy. The app also has a bring-your-own-key sidebar fallback.
