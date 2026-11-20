@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
 import streamlit as st
-from tenacity import retry, stop_after_attempt, wait_exponential
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 from src.claim_extractor import extract_claims
 from src.pdf_utils import extract_pages
@@ -45,7 +45,7 @@ with st.sidebar:
         type="password",
     )
     model = st.text_input("Model", value=current_model_name())
-    max_claims = st.slider("Maximum claims", 5, 25, 20)
+    max_claims = st.slider("Maximum claims", 5, 25, 10)
 
 st.title("Truth Layer")
 st.caption("Upload a PDF. We extract checkable claims and compare them with live web evidence.")
@@ -66,9 +66,20 @@ def cached_extract(pdf_bytes: bytes, key: str, model_name: str, limit: int):
     return extract_claims(pages, key, model_name, limit).model_dump()
 
 
+def retryable_verification_error(exc):
+    message = str(exc).upper()
+    if any(code in message for code in ("429", "RESOURCE_EXHAUSTED", "QUOTA")):
+        return False
+    if any(code in message for code in ("401", "403", "INVALID_API_KEY")):
+        return False
+    return any(code in message for code in ("408", "500", "502", "503", "504", "TIMEOUT", "CONNECTION"))
+
+
+@st.cache_data(show_spinner=False)
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=1, max=8),
+    retry=retry_if_exception(retryable_verification_error),
     reraise=True,
 )
 def verify_one(claim, gemini_key, tavily_key, model_name):
@@ -103,7 +114,7 @@ def run_analysis(pdf_bytes: bytes):
     progress = st.progress(0)
     status = st.empty()
     rows = []
-    with ThreadPoolExecutor(max_workers=4) as pool:
+    with ThreadPoolExecutor(max_workers=2) as pool:
         futures = {
             pool.submit(verify_one, claim, gemini_key, tavily_key, model): claim
             for claim in claims
@@ -115,6 +126,13 @@ def run_analysis(pdf_bytes: bytes):
                 _, result = future.result()
                 row = {"claim": claim, "result": result}
             except Exception as exc:
+                error_text = str(exc)
+                if any(code in error_text.upper() for code in ("429", "RESOURCE_EXHAUSTED", "QUOTA")):
+                    reasoning = "API quota exhausted. Gemini's daily or per-minute quota was reached; wait for reset or use another key."
+                elif "INVALID_TAVILY" in error_text.upper():
+                    reasoning = "Tavily API key is invalid. Check Streamlit secrets or the sidebar key."
+                else:
+                    reasoning = f"Error - retry: {type(exc).__name__}: {error_text}"
                 row = {
                     "claim": claim,
                     "result": __import__("src.schemas", fromlist=["Verification"]).Verification(
@@ -123,7 +141,7 @@ def run_analysis(pdf_bytes: bytes):
                         what_the_evidence_says="Verification request failed.",
                         corrected_fact=None,
                         source_urls=[],
-                        reasoning=f"Error - retry: {type(exc).__name__}: {exc}",
+                        reasoning=reasoning,
                     ),
                 }
             rows.append(row)
